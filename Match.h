@@ -21,6 +21,7 @@ public:
     Player* getWinner();
     void switchPlayer();
     void play();
+    Player* winner();
 };
 
 Match::Match(int size)
@@ -74,6 +75,7 @@ Player* Match::getWinner()
         char icon = _board[pos.row][pos.col];
         int match[4] = { 0 };
 
+        // Check row
         int r = pos.row;
         int c = pos.col;
         while (r > 0 && _board[--r][c] == icon)
@@ -82,6 +84,7 @@ Player* Match::getWinner()
         while (r < _size - 1 &&_board[++r][c] == icon)
             match[0]++;
 
+        // Check column
         r = pos.row;
         while (c > 0 && _board[r][--c] == icon)
             match[1]++;
@@ -89,14 +92,16 @@ Player* Match::getWinner()
         while(c < _size - 1 && _board[r][++c] == icon)
             match[1]++;
 
+        // Check extra diagonal
         c = pos.col;
-        while (r < _size - 1 && c > 0 && _board[++r][--c] == icon)
+        while (r > 0 && c > 0 && _board[--r][--c] == icon)
             match[2]++;
         r = pos.row;
         c = pos.col;
         while(r < _size - 1 && c < _size - 1 && _board[++r][++c] == icon)
             match[2]++;
 
+        // Check main diagonal
         r = pos.row;
         c = pos.col;
         while (r > 0 && c < _size - 1 && _board[--r][++c] == icon)
@@ -122,11 +127,18 @@ void Match::play() {
         {
             tick();
             _winner = getWinner();
-            switchPlayer();
+            if (!_winner)
+                switchPlayer();
         }
         system("cls");
         drawBoard();
     }
-    cout << _winner->icon() << "\n";
+    cout << "Player " << _currPlayer + 1 << " won the match!\n";
+    getch();
     system("cls");
+}
+
+Player* Match::winner() 
+{
+    return _winner;
 }
